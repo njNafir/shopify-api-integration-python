@@ -2,31 +2,27 @@ import requests
 
 """
 
-1. API Key: 
-    This is a unique identifier for your Shopify app. 
-    It is generated when you create the app in the Shopify Partner Dashboard. 
-    The API key is used to identify your app when making API requests.
+To get the new Shopify API token, navigate to 
 
-2. Password: 
-    The password is an API-specific password that is associated with the Shopify store. 
-    It is different from your Shopify account password. 
-    You can generate an API password by following these steps:
+    Settings -> App and sales channel -> Develop apps -> Create an app . 
 
-    * Log in to your Shopify admin.
-    * Go to "Apps" in the sidebar.
-    * Scroll down to the "Manage private apps" section.
-    * Click on "Create a new private app" or select an existing private app.
-    * In the "Admin API" section, you'll find the "Password" field. 
-        This is the password you'll use for authentication in API requests.
+Choose the Configure Admin API scopes, tick all the checkboxes, and click the Save button. 
+
+Install the App and get the Admin API access token that can be used on the migration wizard.
 
 """
 
-def fetch_all_orders(api_key, password, store_url):
+def fetch_all_orders(api_key, store):
     # Prepare the API endpoint URL
-    endpoint = f"https://{api_key}:{password}@{store_url}/admin/api/2023-04/orders.json"
+    endpoint = f"https://{store}.myshopify.com/admin/api/2023-04/orders.json"
+
+    headers = {
+        'Content-Type': 'application/json',
+        'X-Shopify-Access-Token': api_key
+    }
 
     # Send GET request to fetch orders
-    response = requests.get(endpoint)
+    response = requests.get(endpoint, headers=headers)
 
     # Check if the request was successful
     if response.status_code == 200:
@@ -40,11 +36,10 @@ def fetch_all_orders(api_key, password, store_url):
 
 # Set your Shopify API credentials and store URL
 api_key = "your_api_key"
-password = "your_password"
-store_url = "your_store_url.myshopify.com"
+store_url = "your_store_url"
 
 # Fetch all orders
-all_orders = fetch_all_orders(api_key, password, store_url)
+all_orders = fetch_all_orders(api_key, store_url)
 
 # Print the order details
 if all_orders:
